@@ -1,7 +1,8 @@
-
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
 
 
 @SuppressWarnings({"unused","resource"})
@@ -26,28 +27,17 @@ public class Client  {
 		this.username = username;
 	}
 
-	/*
-	 *  Constructor to set below things
-	 *  server: the server address
-	 *  port: the port number
-	 *  username: the username
-	 */
-	
 	Client(String server, int port, String username) {
 		this.server = server;
 		this.port = port;
 		this.username = username;
 	}
 	
-	/*
-	 * To start the chat
-	 */
+
 	public boolean start() {
-		// try to connect to the server
 		try {
 			socket = new Socket(server, port);
 		} 
-		// exception handler if it failed
 		catch(Exception ec) {
 			display("Error connectiong to server:" + ec);
 			return false;
@@ -56,7 +46,6 @@ public class Client  {
 		String msg = "Connection accepted " + socket.getInetAddress() + ":" + socket.getPort();
 		display(msg);
 	
-		/* Creating both Data Stream */
 		try
 		{
 			sInput  = new ObjectInputStream(socket.getInputStream());
@@ -80,13 +69,10 @@ public class Client  {
 			disconnect();
 			return false;
 		}
-		// success we inform the caller that it worked
 		return true;
 	}
 
-	/*
-	 * To send a message to the console
-	 */
+	
 	private void display(String msg) {
 
 		System.out.println(msg);
@@ -157,7 +143,7 @@ public class Client  {
 				}
 				catch(Exception e) {
 					System.out.println("Invalid port number.");
-					System.out.println("Usage is: >> java Client [username] [portNumber] [serverAddress]");
+					System.out.println("Usage Format: >> java Client [username] [portNumber] [serverAddress]");
 					return;
 				}
 			case 1: 
@@ -168,7 +154,7 @@ public class Client  {
 				break;
 			// if number of arguments are invalid
 			default:
-				System.out.println("Usage is: >> java Client [username] [portNumber] [serverAddress]");
+				System.out.println("Usage Format: >> java Client [username] [portNumber] [serverAddress]");
 			return;
 		}
 		// create the Client object

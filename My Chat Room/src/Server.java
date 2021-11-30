@@ -14,7 +14,7 @@ public class Server {
 	// the port number to listen for connection
 	private int port;
 	// to check if server is running
-	private boolean keepGoing;
+	private boolean isServerRunning;
 	// notification
 	private String notification = " *** ";
 	
@@ -30,7 +30,7 @@ public class Server {
 	}
 	
 	public void start() {
-		keepGoing = true;
+		isServerRunning = true;
 		//create socket server and wait for connection requests 
 		try 
 		{
@@ -38,14 +38,14 @@ public class Server {
 			ServerSocket serverSocket = new ServerSocket(port);
 
 			// infinite loop to wait for connections ( till server is active )
-			while(keepGoing) 
+			while(isServerRunning) 
 			{
 				display("Server waiting for Clients on port " + port + ".");
 				
 				// accept connection if requested from client
 				Socket socket = serverSocket.accept();
 				// break if server stoped
-				if(!keepGoing)
+				if(!isServerRunning)
 					break;
 				// if client is connected, create its thread
 				ClientThread t = new ClientThread(socket);
@@ -81,7 +81,7 @@ public class Server {
 	
 	// to stop the server
 	protected void stop() {
-		keepGoing = false;
+		isServerRunning = false;
 		try {
 			new Socket("localhost", port);
 		}
@@ -198,13 +198,13 @@ public class Server {
 				}
 				catch(Exception e) {
 					System.out.println("Invalid port number.");
-					System.out.println("Usage is: >> java Server [portNumber]");
+					System.out.println("Usage Format: >> java Server [portNumber]");
 					return;
 				}
 			case 0:
 				break;
 			default:
-				System.out.println("Usage is: >> java Server [portNumber]");
+				System.out.println("Usage Format: >> java Server [portNumber]");
 				return;
 				
 		}
@@ -234,7 +234,7 @@ public class Server {
 			id = ++clientUniqueId;
 			this.socket = socket;
 			//Creating both Data Stream
-			System.out.println("Thread trying to create Object Input/Output Streams");
+			System.out.println("Thread trying to create Data Streams");
 			try
 			{
 				sOutput = new ObjectOutputStream(socket.getOutputStream());
@@ -263,8 +263,8 @@ public class Server {
 		// infinite loop to read and forward message
 		public void run() {
 			// to loop until LOGOUT
-			boolean keepGoing = true;
-			while(keepGoing) {
+			boolean isServerRunning = true;
+			while(isServerRunning) {
 				// read a String (which is an object)
 				try {
 					cm = (ChatMessage) sInput.readObject();
@@ -291,7 +291,7 @@ public class Server {
 					break;
 				case ChatMessage.LOGOUT:
 					display(username + " disconnected with a LOGOUT message.");
-					keepGoing = false;
+					isServerRunning = false;
 					break;
 				case ChatMessage.VIEWGROUP:
 					writeMsg("Group Participants as of " + sdf.format(new Date()) + "\n");
